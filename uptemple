@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# Data file with temple information
+data_file="up_temples.csv"
+
+# Check if the data file exists
+if [[ ! -f "$data_file" ]]; then
+    echo "Data file '$data_file' not found. Please make sure it exists in the same directory as this script."
+    exit 1
+fi
+
+# Function to display temple information
+display_temple_info() {
+    local temple_data=("$@")
+    echo "---------------------------------"
+    echo "Temple: ${temple_data[0]}"
+    echo "City: ${temple_data[1]}"
+    echo "Description: ${temple_data[2]}"
+    echo "---------------------------------"
+}
+
+# Function to display all temples or search by city
+temple_menu() {
+    echo "Uttar Pradesh Temple Information"
+    echo "1. Display All Temples"
+    echo "2. Search by City"
+    echo "Q. Quit"
+    
+    read -p "Select an option (1, 2, or Q to quit): " option
+
+    case $option in
+        1)
+            # Display all temples
+            while IFS=',' read -r temple city description; do
+                display_temple_info "$temple" "$city" "$description"
+            done < <(tail -n +2 "$data_file")
+            ;;
+        2)
+            # Search by city
+            read -p "Enter the city name: " search_city
+            found=0
+            while IFS=',' read -r temple city description; do
+                if [[ "$city" == "$search_city" ]]; then
+                    display_temple_info "$temple" "$city" "$description"
+                    found=1
+                fi
+            done < <(tail -n
